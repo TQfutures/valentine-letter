@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mi Carta 💌</title>
+
+  <!-- iPhone: look & feel tipo app al “Agregar a pantalla de inicio” -->
+  <meta name="theme-color" content="#ff2d6f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mi Carta 💌" />
+
+  <style>
+    :root{
+      --bg1:#ffd1dc;
+      --bg2:#fff0f5;
+      --ink:#3a0b1c;
+      --accent:#ff2d6f;
+      --accent2:#ff7aa8;
+      --paper:#fffaf7;
+      --paper2:#fff4f7;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+      --radius: 22px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--ink);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(255,255,255,.55), transparent 55%),
+        radial-gradient(1000px 700px at 80% 30%, rgba(255,255,255,.45), transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    /* Hearts background */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .heart{
+      position:absolute;
+      width:20px; height:20px;
+      transform: rotate(45deg);
+      opacity:.35;
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.08));
+    }
+    .heart, .heart::before, .heart::after{ background: var(--accent); }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:20px; height:20px;
+      border-radius:50%;
+    }
+    .heart::before{ left:-10px; top:0; }
+    .heart::after{ left:0; top:-10px; }
+    @keyframes floatUp{
+      from { transform: translateY(110vh) rotate(45deg) scale(var(--s,1)); }
+      to   { transform: translateY(-20vh) rotate(45deg) scale(var(--s,1)); }
+    }
+
+    /* Layout */
+    .wrap{
+      position:relative;
+      z-index:2;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+    }
+
+    .paper{
+      width:min(860px, 95vw);
+      background: linear-gradient(180deg, var(--paper), var(--paper2));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:relative;
+      padding: clamp(18px, 3vw, 34px);
+      border: 1px solid rgba(0,0,0,.05);
+      overflow:hidden;
+    }
+
+    .paper::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(14px 14px at 12% 22%, rgba(255,45,111,.08), transparent 60%),
+        radial-gradient(18px 18px at 86% 30%, rgba(255,45,111,.06), transparent 62%),
+        radial-gradient(16px 16px at 30% 82%, rgba(255,45,111,.06), transparent 62%);
+      pointer-events:none;
+      mix-blend-mode:multiply;
+      opacity:.9;
+    }
+
+    .topRow{
+      display:flex;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      position:relative;
+      z-index:1;
+    }
+
+    .stamp{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: rgba(255,45,111,.10);
+      border: 1px dashed rgba(255,45,111,.35);
+      font-weight: 800;
+    }
+
+    .meta{
+      text-align:right;
+      font-family: var(--serif);
+      opacity:.85;
+      line-height:1.35;
+      font-size: 14px;
+    }
+
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.12), transparent);
+      margin: 16px 0 18px;
+      position:relative;
+      z-index:1;
+    }
+
+    .letterTitle{
+      font-family: var(--serif);
+      font-size: clamp(30px, 4vw, 44px);
+      margin: 0 0 6px;
+      letter-spacing: -0.4px;
+      position:relative;
+      z-index:1;
+    }
+    .salute{
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.3vw, 22px);
+      margin: 0 0 12px;
+      opacity:.95;
+      position:relative;
+      z-index:1;
+    }
+
+    .bodyText{
+      font-family: var(--serif);
+      font-size: clamp(16px, 2.1vw, 19px);
+      line-height: 1.85;
+      margin: 0;
+      white-space: pre-line;
+      position:relative;
+      z-index:1;
+    }
+
+    .signature{
+      margin-top: 18px;
+      font-family: var(--serif);
+      font-size: 18px;
+      position:relative;
+      z-index:1;
+    }
+    .signName{
+      display:inline-block;
+      margin-top: 8px;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .questionBox{
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(0,0,0,.06);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+
+    .prompt{
+      font-weight: 900;
+      font-size: 18px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      position:relative;
+      min-height: 52px;
+    }
+
+    button{
+      border:none;
+      cursor:pointer;
+      font-weight: 900;
+      padding: 12px 16px;
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.14);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      font-size: 16px;
+    }
+
+    #yesBtn{
+      background: linear-gradient(135deg, var(--accent), #ff4f87);
+      color: #fff;
+    }
+    #yesBtn:hover{ transform: translateY(-2px) scale(1.02); filter: brightness(1.03); }
+    #yesBtn:active{ transform: translateY(0px) scale(.99); }
+
+    #noBtn{
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(0,0,0,.06);
+      color: var(--ink);
+      position: relative;
+    }
+
+    .result{
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,45,111,.09);
+      border: 1px solid rgba(255,45,111,.18);
+      display:none;
+      animation: pop .35s ease forwards;
+      font-weight: 700;
+      position:relative;
+      z-index:1;
+    }
+    @keyframes pop{
+      from { transform: translateY(10px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .tiny{
+      margin-top: 10px;
+      font-size: 12.5px;
+      opacity:.65;
+      text-align:center;
+      position:relative;
+      z-index:1;
+    }
+
+    /* iPhone hint bubble */
+    .hint{
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 5;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      padding: 12px 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.18);
+      display:none;
+      backdrop-filter: blur(10px);
+    }
+    .hint strong{ display:block; margin-bottom:6px; }
+    .hint .row{ display:flex; gap:10px; align-items:center; justify-content:space-between; }
+    .hint button{
+      box-shadow:none;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,45,111,.10);
+      color: var(--ink);
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+
+    @media (max-width: 520px){
+      .meta{ text-align:left; width:100%; }
+      .questionBox{ justify-content:center; }
+      .btnRow{ width:100%; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <article class="paper" aria-label="Carta de San Valentín">
+      <div class="topRow">
+        <div class="stamp">💌 Carta de San Valentín</div>
+        <div class="meta">
+          14 de febrero<br>
+          Para: <strong>Katy</strong> 💖
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h1 class="letterTitle">Mi princesa,</h1>
+      <p class="salute">Con todo mi cariño…</p>
+
+      <p class="bodyText">
+Quiero expresarte el gran amor que siento por ti. Aprecio de verdad cada momento que compartimos, y me encanta estar a tu lado.
+
+Para celebrar el Día de San Valentín y también nuestro aniversario, quisiera invitarte a salir conmigo el 14 de febrero.
+
+Katy, mi princesa bella y hermosa… ¿aceptas? 💖
+      </p>
+
+      <div class="signature">
+        Con amor,<br>
+        <span class="signName">Tommy</span> ✨
+      </div>
+
+      <div class="questionBox">
+        <div class="prompt">💘 ¿Me acompañas ese día?</div>
+        <div class="btnRow">
+          <button id="yesBtn" type="button">Sí 💖</button>
+          <button id="noBtn" type="button">No 🙈</button>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        🥰 ¡Yo sabía que dirías que sí! Te espero el <strong>14 de febrero</strong>, mi princesa. 💞
+      </div>
+
+      <div class="tiny">Pista: el “No” se asusta porque sabe que aquí solo hay amor 😄</div>
+    </article>
+  </main>
+
+  <div class="hint" id="hint">
+    <strong>📱 Tip en iPhone:</strong>
+    <div>Si quieres abrir esta carta como un acceso directo, ábrela en Safari y toca <b>Compartir</b> → <b>Agregar a pantalla de inicio</b>.</div>
+    <div class="row" style="margin-top:10px;">
+      <span style="opacity:.75; font-size:13px;">(Solo aparece si no está “instalada”)</span>
+      <button type="button" id="hideHint">Entendido</button>
+    </div>
+  </div>
+
+  <script>
+    // Hearts
+    const hearts = document.getElementById("hearts");
+    const COUNT = 28;
+    const rand = (a,b)=>Math.random()*(b-a)+a;
+
+    for(let i=0;i<COUNT;i++){
+      const h = document.createElement("div");
+      h.className="heart";
+      h.style.left = rand(0,100)+"vw";
+      h.style.animationDuration = rand(6,14)+"s";
+      h.style.animationDelay = rand(-12,0)+"s";
+      h.style.setProperty("--s", rand(.7,1.6));
+      h.style.opacity = rand(.15,.5);
+      h.style.background = (Math.random()>.5) ? "rgba(255,45,111,.9)" : "rgba(255,122,168,.9)";
+      hearts.appendChild(h);
+    }
+
+    // Dodging No button
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+
+    function dodge(evt){
+      if(getComputedStyle(noBtn).position !== "fixed"){
+        const r = noBtn.getBoundingClientRect();
+        noBtn.style.position = "fixed";
+        noBtn.style.left = r.left + "px";
+        noBtn.style.top  = r.top  + "px";
+      }
+
+      const padding = 12;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const rect = noBtn.getBoundingClientRect();
+      const maxX = vw - rect.width - padding;
+      const maxY = vh - rect.height - padding;
+
+      let x = rand(padding, maxX);
+      let y = rand(padding, maxY);
+
+      if(evt && evt.clientX != null){
+        const awayX = (evt.clientX < vw/2) ? rand(vw/2, maxX) : rand(padding, vw/2 - rect.width);
+        const awayY = (evt.clientY < vh/2) ? rand(vh/2, maxY) : rand(padding, vh/2 - rect.height);
+        x = Math.max(padding, Math.min(maxX, awayX));
+        y = Math.max(padding, Math.min(maxY, awayY));
+      }
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
+
+    noBtn.addEventListener("mouseenter", dodge);
+    noBtn.addEventListener("mousemove", dodge);
+    noBtn.addEventListener("pointerdown", (e)=>{ e.preventDefault(); dodge(e); });
+    noBtn.addEventListener("focus", dodge);
+
+    yesBtn.addEventListener("click", ()=>{
+      result.style.display="block";
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      burstHearts();
+    });
+
+    function burstHearts(){
+      const count = 14;
+      for(let i=0;i<count;i++){
+        const h = document.createElement("div");
+        h.className="heart";
+        h.style.position="fixed";
+        h.style.left = (window.innerWidth/2 + rand(-90,90)) + "px";
+        h.style.top  = (window.innerHeight/2 + rand(-40,80)) + "px";
+        h.style.opacity = rand(.35,.75);
+        h.style.setProperty("--s", rand(.7,1.6));
+        h.style.animationDuration = rand(2.8,4.8) + "s";
+        h.style.animationDelay = "0s";
+        h.style.background = (Math.random()>.5) ? "rgba(255,45,111,.95)" : "rgba(255,122,168,.95)";
+        hearts.appendChild(h);
+        setTimeout(()=>h.remove(), 5200);
+      }
+    }
+
+    window.addEventListener("resize", ()=>{
+      if(getComputedStyle(noBtn).position === "fixed"){
+        const rect = noBtn.getBoundingClientRect();
+        const padding = 12;
+        const maxX = window.innerWidth - rect.width - padding;
+        const maxY = window.innerHeight - rect.height - padding;
+        noBtn.style.left = Math.max(padding, Math.min(maxX, rect.left)) + "px";
+        noBtn.style.top  = Math.max(padding, Math.min(maxY, rect.top)) + "px";
+      }
+    });
+
+    // iPhone "Add to Home Screen" hint (solo si NO está en modo standalone)
+    const hint = document.getElementById("hint");
+    const hideHint = document.getElementById("hideHint");
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const inStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
+
+    if(isIOS && !inStandalone){
+      // Solo muéstralo si el usuario no lo cerró antes
+      if(localStorage.getItem("hideA2HS") !== "1"){
+        hint.style.display = "block";
+      }
+    }
+
+    hideHint.addEventListener("click", ()=>{
+      localStorage.setItem("hideA2HS","1");
+      hint.style.display = "none";
+    });
+  </script>
+</body>
+</html>
